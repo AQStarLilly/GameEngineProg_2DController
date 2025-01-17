@@ -20,25 +20,30 @@ public class InputManager : MonoBehaviour, GameInput.IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.started)
         {
-            Debug.Log("Move input hit : " + context.ReadValue<Vector2>());
-
+            Debug.Log("Movement started : " + context.ReadValue<Vector2>());
             Actions.MoveEvent?.Invoke(context.ReadValue<Vector2>());
-        }        
+        }      
+        else if (context.canceled)
+        {
+            Debug.Log("Movement stopped.");
+            Actions.MoveEvent?.Invoke(Vector2.zero);
+        }       
     }
 
-
-    // Start is called before the first frame update
-    void Start()
+    public void OnInteract(InputAction.CallbackContext context)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (context.started)
+        {
+            Debug.Log("Interaction started.");
+            Actions.InteractionEvent?.Invoke(true);
+        }
+        else if (context.canceled)
+        {
+            Debug.Log("Interaction stopped.");
+            Actions.InteractionEvent?. Invoke(false); 
+        }
     }
 }
 
@@ -46,4 +51,5 @@ public class InputManager : MonoBehaviour, GameInput.IPlayerActions
 public static class Actions
 {
     public static Action<Vector2> MoveEvent;
+    public static Action<bool> InteractionEvent;
 }

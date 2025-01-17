@@ -1,22 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public CharacterController characterController;
+    [SerializeField]
+    private float moveSpeed = 2.0f;
 
-    public Vector2 moveDirection = new Vector2(0.00f, 1.00f);
-    
+
+    private CharacterController characterController;
+
+    public Vector2 moveVector = Vector2.zero;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         characterController = this.GetComponent<CharacterController>();
+
+        Actions.MoveEvent += UpdateMoveVector;
     }  
 
-    void HandlePlayerMovement(Vector2 moveDirection)
+    private void UpdateMoveVector(Vector2 InputVector)
     {
-        characterController.Move(moveDirection * Time.deltaTime);
-    }    
+        moveVector = InputVector;
+    }
+ 
+
+    private void Update()
+    {
+        HandlePlayerMovement(moveVector);
+    }
+
+
+    void HandlePlayerMovement(Vector2 moveVector)
+    {
+        characterController.Move(moveVector * moveSpeed * Time.deltaTime);
+    }
+
+
+
+    void OnDisable()
+    {
+        Actions.MoveEvent -= UpdateMoveVector;
+    }
 }
