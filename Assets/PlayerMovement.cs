@@ -4,41 +4,37 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
-{
-    [SerializeField]
-    private float moveSpeed = 2.0f;
-
-
-    private CharacterController characterController;
-
+{    
+    
+    private Rigidbody2D playerRigidbody;
     public Vector2 moveVector = Vector2.zero;
+    private float moveSpeed = 2.0f;
 
     // Start is called before the first frame update
     void Awake()
-    {
-        characterController = this.GetComponent<CharacterController>();
-
+    {       
         Actions.MoveEvent += UpdateMoveVector;
     }  
+
+    void Start()
+    {
+        playerRigidbody = this.GetComponent<Rigidbody2D>();
+    }
 
     private void UpdateMoveVector(Vector2 InputVector)
     {
         moveVector = InputVector;
     }
  
-
-    private void Update()
+    void FixedUpdate()
     {
-        HandlePlayerMovement(moveVector);
+        HandlePlayerMovement();
     }
 
-
-    void HandlePlayerMovement(Vector2 moveVector)
+    void HandlePlayerMovement()
     {
-        characterController.Move(moveVector * moveSpeed * Time.deltaTime);
+        playerRigidbody.MovePosition(playerRigidbody.position + moveVector * moveSpeed * Time.fixedDeltaTime);
     }
-
-
 
     void OnDisable()
     {
